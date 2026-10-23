@@ -1,0 +1,36 @@
+
+#include "libft.h"
+
+static void	ft_ondelete(void *content, size_t len)
+{
+	(void)len;
+	free(content);
+	content = NULL;
+}
+
+t_list		*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem))
+{
+	t_list	*next;
+	t_list	*new_first;
+	t_list	*new_current;
+
+	if (lst == NULL)
+		return (NULL);
+	new_first = f(lst);
+	if (new_first == NULL)
+		return (NULL);
+	new_current = new_first;
+	while (lst->next)
+	{
+		next = lst->next;
+		new_current->next = f(next);
+		if (new_current->next == NULL)
+		{
+			ft_lstdel(&new_first, ft_ondelete);
+			return (NULL);
+		}
+		lst = next;
+		new_current = new_current->next;
+	}
+	return (new_first);
+}
